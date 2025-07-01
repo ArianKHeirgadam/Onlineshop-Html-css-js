@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management - Our Store</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+
+        .uk-button-default {
+            background-color: #006d77;
+            color: #ffffff;
+            border: none;
+        }
+
+        .uk-button-default:hover {
+            background-color: #004d54;
+            color: #ffffff;
+        }
+
+        .uk-offcanvas-bar {
+            background: #006d77;
+        }
+
+        .uk-nav-default > li > a {
+            color: #ffffff;
+        }
+
+        .uk-nav-default > li > a:hover {
+            color: #edf6f9;
+        }
+
+        .uk-table {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .uk-table th {
+            background: #edf6f9;
+            color: #006d77;
+        }
+
+        .uk-modal-dialog {
+            border-radius: 10px;
+            background: #ffffff;
+        }
+
+        .uk-modal-title {
+            color: #006d77;
+        }
+
+        .uk-input, .uk-select, .uk-textarea {
+            border: 1px solid #006d77;
+            border-radius: 5px;
+        }
+
+        .uk-input:focus, .uk-select:focus, .uk-textarea:focus {
+            border-color: #004d54;
+        }
+
+        .uk-button-primary {
+            background-color: #006d77;
+        }
+
+        .uk-button-primary:hover {
+            background-color: #004d54;
+        }
+
+        /* Button styles */
+        .uk-table button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .uk-table button:first-child {
+            background-color: #006d77;
+        }
+
+        .uk-table button:first-child:hover {
+            background-color: #004d54;
+        }
+
+        .uk-table button:last-child {
+            background-color: #dc3545;
+        }
+
+        .uk-table button:last-child:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <a href="#offcanvas-slide" class="uk-button uk-button-default" uk-toggle>Menu</a>
+    <button class="uk-button uk-button-default uk-margin-small-right" type="button" uk-toggle="target: #modal-add-product">Add Product</button>
+
+    <div id="offcanvas-slide" uk-offcanvas>
+        <div class="uk-offcanvas-bar">
+            <ul class="uk-nav uk-nav-default">
+                <li><a href="admin.html">Users</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="brands.html">Brands</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <table class="uk-table uk-table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Brand ID</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tbl"></tbody>
+    </table>
+
+    
+    <div id="modal-add-product" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <h2 class="uk-modal-title">Add Product</h2>
+            <div class="uk-margin">
+                <input class="uk-input" type="text" id="name" placeholder="Name" />
+            </div>
+            <div class="uk-margin">
+                <input class="uk-input" type="number" id="price" placeholder="Price" />
+            </div>
+            <div class="uk-margin">
+                <input class="uk-input" type="number" id="brandId" placeholder="Brand ID" />
+            </div>
+            <div class="uk-margin">
+                <input class="uk-input" type="text" id="description" placeholder="Description" />
+            </div>
+            <div class="uk-margin">
+                <input class="uk-input" type="text" id="imageName" placeholder="Image Name" />
+            </div>
+            <div class="uk-margin">
+              <input class="uk-input" type="number" id="sku" placeholder="SKU" />
+            </div>
+            <p class="uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary" type="button" onclick="addProduct()">Save</button>
+            </p>
+        </div>
+    </div>
+
+    
+    <div id="modal-edit-product" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <h2 class="uk-modal-title">Edit Product</h2>
+            
+            <div class="uk-card uk-card-default uk-card-body">
+                <div class="uk-margin">
+                    <label class="uk-form-label">Product Name</label>
+                    <input class="uk-input" type="text" placeholder="Name" id="ename">
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label">Price</label>
+                    <input class="uk-input" type="text" placeholder="Price" id="eprice">
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label">Image URL</label>
+                    <input class="uk-input" type="text" placeholder="Image" id="eimage" onchange="updateImagePreview()">
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label">Product Image</label>
+                    <div class="uk-card uk-card-default uk-card-body">
+                        <img id="eproduct-image" src="" alt="Product Image" style="max-width: 200px; margin: 10px 0; display: none;" onerror="this.style.display='none'; document.getElementById('no-image').style.display='block';">
+                        <div id="no-image" class="uk-text-muted">No image available</div>
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label">Brand</label>
+                    <select class="uk-select" id="ebrand">
+                        <option value="">Select Brand</option>
+                    </select>
+                </div>
+                <div class="uk-margin">
+                    <div class="uk-card uk-card-secondary uk-card-body">
+                        <p>Current Brand: <span id="ecurrent-brand"></span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary" type="button" onclick="editProduct()">Save</button>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    <script>
+
+        UIkit.use(UIkitIcons);
+        
+        let selectionId = null;
+
+        function getToken() {
+            return localStorage.getItem("token");
+        }
+
+        function loadProducts() {
+            const token = getToken();
+            $.ajax({
+                url: 'https://localhost:7139/api/Product',
+                method: 'GET',
+                headers: { Authorization: "Bearer " + token },
+                success: function (data) {
+                    const tbl = document.getElementById('tbl');
+                    tbl.innerHTML = '';
+                    data.forEach(product => {
+                        tbl.innerHTML +=` 
+                            <tr>
+                                <td>${product.id}</td>
+                                <td>${product.name}</td>
+                                <td>${product.price}</td>
+                                <td>${product.brandId}</td>
+                                <td>${product.description}</td>
+                                <td>
+                                    <a onClick="openEdit(${product.id})" uk-icon="icon: file-edit"></a>
+                                    <a onClick="deleteProduct(${product.id})" uk-icon="icon: trash"></a>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+            });
+        }
+
+        function loadBrands() {
+            const token = getToken();
+            $.ajax({
+                url: 'https://localhost:7139/api/Brand',
+                method: 'GET',
+                headers: { Authorization: "Bearer " + token },
+                success: function (data) {
+                    const brandSelect = document.getElementById('ebrand');
+                    brandSelect.innerHTML = '<option value="">Select Brand</option>';
+                    data.forEach(brand => {
+                        brandSelect.innerHTML += `<option value="${brand.id}">${brand.name}</option>`;
+                    });
+                }
+            });
+        }
+
+        function updateImagePreview() {
+            const imageUrl = document.getElementById('eimage').value;
+            const imageElement = document.getElementById('eproduct-image');
+            const noImageElement = document.getElementById('no-image');
+            
+            if (imageUrl) {
+                imageElement.src = `Resources/${imageUrl}`;
+                imageElement.style.display = 'block';
+                noImageElement.style.display = 'none';
+            } else {
+                imageElement.style.display = 'none';
+                noImageElement.style.display = 'block';
+            }
+        }
+
+        function openEdit(id) {
+            selectionId = id;
+            const token = getToken();
+            $.ajax({
+                url: `https://localhost:7139/api/Product/${id}`,
+                contentType: 'application/json',
+                method: 'GET',
+                headers: { Authorization: "Bearer " + token },
+                success: (data) => {
+                    document.getElementById('ename').value = data.name;
+                    document.getElementById('eprice').value = data.price;
+                    document.getElementById('eimage').value = data.image;
+                    document.getElementById('ecurrent-brand').textContent = data.brandName;
+                    document.getElementById('ebrand').value = data.brandId;
+                    
+                    // Handle image display
+                    const imageElement = document.getElementById('eproduct-image');
+                    const noImageElement = document.getElementById('no-image');
+                    if (data.image) {
+                        imageElement.src = `Resources/${data.image}`;
+                        imageElement.style.display = 'block';
+                        noImageElement.style.display = 'none';
+                    } else {
+                        imageElement.style.display = 'none';
+                        noImageElement.style.display = 'block';
+                    }
+                    
+                    var modal = UIkit.modal('#modal-edit-product');
+                    modal.show();
+                },
+                error: (err) => {
+                    console.log(err);
+                }
+            });
+        }
+
+        function editProduct() {
+            const token = getToken();
+            const dto = {
+                id: selectionId,
+                name: document.getElementById('ename').value,
+                price: document.getElementById('eprice').value,
+                image: document.getElementById('eimage').value,
+                brandId: document.getElementById('ebrand').value
+            };
+
+            $.ajax({
+                url: `https://localhost:7139/api/Product/${selectionId}`,
+                contentType: 'application/json',
+                method: 'PUT',
+                headers: { Authorization: "Bearer " + token },
+                data: JSON.stringify(dto),
+                success: () => {
+                    UIkit.modal(document.getElementById('modal-edit-product')).hide();
+                    document.getElementById('ename').value = '';
+                    document.getElementById('eprice').value = '';
+                    document.getElementById('eimage').value = '';
+                    document.getElementById('ebrand').value = '';
+                    document.getElementById('eproduct-image').src = '';
+                    document.getElementById('ecurrent-brand').textContent = '';
+                    loadProducts();
+                },
+                error: (err) => {
+                    console.log(err);
+                }
+            });
+        }
+
+        function addProduct() {
+            const token = getToken();
+            const data = {
+                name: document.getElementById('name').value.trim() || "No Name",
+                price: parseInt(document.getElementById('price').value) || 0,
+                brandId: parseInt(document.getElementById('brandId').value) || 0,
+                description: document.getElementById('description').value.trim() || "",
+                image: document.getElementById('imageName').value.trim() || "default.jpg",
+                sku: parseInt(document.getElementById('sku').value) || 0
+            };
+
+            $.ajax({
+                url: 'https://localhost:7139/api/Product',
+                method: 'POST',
+                headers: {
+                    'Authorization': "Bearer " + token,
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(data),
+                success: function () {
+                    UIkit.modal(document.getElementById('modal-add-product')).hide();
+                    loadProducts();
+                    alert('Product added successfully!');
+                },
+                error: function (xhr) {
+                    let msg = "Error adding product.";
+                    if(xhr.responseJSON && xhr.responseJSON.errors){
+                        msg = JSON.stringify(xhr.responseJSON.errors);
+                    } else if(xhr.responseText){
+                        msg = xhr.responseText;
+                    }
+
+                    console.error('Error adding product:', xhr);
+                }
+            });
+        }
+
+        function deleteProduct(id) {
+            const token = getToken();
+            $.ajax({
+                url: `https://localhost:7139/api/Product/${id}`,
+                method: 'DELETE',
+                headers: { Authorization: "Bearer " + token },
+                success: function () {
+                    loadProducts();
+                },
+                error: function (err) {
+                    console.error('Error deleting product:', err);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            loadProducts();
+            loadBrands();
+        });
+    </script>
+</body>
+</html> 

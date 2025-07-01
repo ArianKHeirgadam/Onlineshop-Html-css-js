@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود - فروشگاه ما</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #ffffff, #006d77);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 90%;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo h1 {
+            color: #006d77;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            text-align: right;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #006d77;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #006d77;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background-color: #004d54;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .register-link a {
+            color: #006d77;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link a:hover {
+            color: #006d77;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>فروشگاه ما</h1>
+        </div>
+        <form id="loginForm" onsubmit="login(); return false;">
+            <div class="form-group">
+                <label for="username"><b>نام کاربری</b></label>
+                <input type="text" id="txtUsername" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password"><b>رمز عبور</b></label>
+                <input type="password" id="txtPassword" name="password" required>
+            </div>
+            <button type="submit" class="login-btn">ورود</button>
+            <div id="errors"></div>
+        </form>
+        <div class="register-link">
+            حساب کاربری ندارید؟ <a href="register.html">ایجاد حساب جدید</a>
+        </div>
+        <div class="back-link">
+            <a href="main.html">بازگشت به صفحه اصلی</a>
+        </div>
+    </div>
+
+    <div id="product-modal" class="uk-flex-top" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical" style="border-radius: 10px; max-width: 400px; background-color: #edf6f9;">
+            <button class="uk-modal-close-default" type="button" uk-close style="color: #006d77;"></button>
+            <div id="modal-content" style="color: #006d77;">
+            </div>
+        </div>
+    </div>
+
+    <script>
+       function login() {
+    const txtUsername = document.getElementById('txtUsername').value;
+    const txtPassword = document.getElementById('txtPassword').value;
+    const dto = { username: txtUsername, password: txtPassword };
+
+    $.ajax({
+      url: 'https://localhost:7139/api/Account/Login',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(dto),
+
+      success: (response) => {
+        let token = typeof response === 'string'
+          ? response.replace(/^"|"$/g, '')
+          : response.token;
+
+        if (!token) {
+          console.error('توکن دریافت نشد:', response);
+          return;
+        }
+        localStorage.setItem("token",token);
+
+        const header = { Authorization: `Bearer ${token}` };
+
+        $.ajax({
+          url: 'https://localhost:7139/api/Account/DetermineUserRole',
+          method: 'GET',
+          contentType: 'application/json',
+          headers: header,
+
+          success: (rolePage) => {
+           
+            window.location.href = rolePage;
+          },
+          error: (errr) => {
+            console.error('خطا در دریافت نقش کاربر:', errr);
+          }
+        });
+
+        const errorcontainer = document.getElementById('errors');
+        if (errorcontainer) errorcontainer.innerHTML = '';
+      },
+
+      error: (err) => {
+        const errorcontainer = document.getElementById('errors');
+        if (errorcontainer) {
+          errorcontainer.innerHTML = `<li>${err.responseText}</li>`;
+        }
+      }
+    });
+  }
+      </script>
+      <script src="js/jquery-3.7.1.min.js"></script>
+</body>
+</html> 

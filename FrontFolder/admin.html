@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Our Store</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+
+        .uk-button-default {
+            background-color: #006d77;
+            color: #ffffff;
+            border: none;
+        }
+
+        .uk-button-default:hover {
+            background-color: #004d54;
+            color: #ffffff;
+        }
+
+        .uk-offcanvas-bar {
+            background: #006d77;
+        }
+
+        .uk-nav-default > li > a {
+            color: #ffffff;
+        }
+
+        .uk-nav-default > li > a:hover {
+            color: #edf6f9;
+        }
+
+        .uk-table {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .uk-table th {
+            background: #edf6f9;
+            color: #006d77;
+        }
+
+        .uk-modal-dialog {
+            border-radius: 10px;
+            background: #ffffff;
+        }
+
+        .uk-modal-title {
+            color: #006d77;
+        }
+
+        .uk-input, .uk-select {
+            border: 1px solid #006d77;
+            border-radius: 5px;
+        }
+
+        .uk-input:focus, .uk-select:focus {
+            border-color: #004d54;
+        }
+
+        .uk-button-primary {
+            background-color: #006d77;
+        }
+
+        .uk-button-primary:hover {
+            background-color: #004d54;
+        }
+    </style>
+</head>
+<body>
+    <a href="#offcanvas-slide" class="uk-button uk-button-default" uk-toggle>Menu</a>
+    <button class="uk-button uk-button-default uk-margin-small-right" type="button" uk-toggle="target: #modal-add-user">Add User</button>
+    
+    <div id="offcanvas-slide" uk-offcanvas>
+        <div class="uk-offcanvas-bar">
+            <ul class="uk-nav uk-nav-default">
+                <li><a href="admin.html">Users</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="brands.html">Brands</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <table class="uk-table uk-table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tbl"></tbody>
+    </table>
+
+    <div id="modal-add-user" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <h2 class="uk-modal-title">Add User</h2>
+            
+            <div class="uk-margin">
+                <input class="uk-input" type="text" placeholder="Name" aria-label="Input" id="name">
+            </div>
+
+            <div class="uk-margin">
+                <input class="uk-input" type="text" placeholder="Phone" aria-label="Input" id="tell">
+            </div>
+
+            <div class="uk-margin">
+                <input class="uk-input" type="text" placeholder="Username" aria-label="Input" id="username">
+            </div>
+
+            <div class="uk-margin">
+                <input class="uk-input" type="password" placeholder="Password" aria-label="Input" id="password">
+            </div>
+
+            <div class="uk-margin">
+                <select class="uk-select" aria-label="Select" id="role">
+                    <option value="1">Admin</option>
+                    <option value="2">Product Manager</option>
+                    <option value="3">User</option>
+                </select>
+            </div>
+            
+            <p class="uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary" type="button" onclick="addUser()">Save</button>
+            </p>
+        </div>
+    </div>
+
+    <div id="modal-edit-user" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <h2 class="uk-modal-title">Edit User</h2>
+            
+            <div class="uk-margin">
+                <input class="uk-input" type="text" placeholder="Name" aria-label="Input" id="ename">
+            </div>
+
+            <div class="uk-margin">
+                <input class="uk-input" type="text" placeholder="Phone" aria-label="Input" id="etell">
+            </div>
+
+            <div class="uk-margin">
+                <input class="uk-input" type="text" placeholder="Username" aria-label="Input" id="eusername" disabled>
+            </div>
+
+            <div class="uk-margin">
+                <input class="uk-input" type="password" placeholder="Password" aria-label="Input" id="epassword">
+            </div>
+
+            <div class="uk-margin">
+                <select class="uk-select" aria-label="Select" id="erole">
+                    <option value="1">Admin</option>
+                    <option value="2">Product Manager</option>
+                    <option value="3">User</option>
+                </select>
+            </div>
+            
+            <p class="uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary" type="button" onclick="editUser()">Save</button>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script>
+         UIkit.use(UIkitIcons);
+        
+
+
+        function getToken() {
+            return localStorage.getItem("token");
+        }
+    var selectionId;
+    var tbl = document.getElementById('tbl');
+
+    function loadGrid() {
+        const token = getToken();
+        $.ajax({
+            url: 'https://localhost:7139/api/User',
+            method: 'GET',
+            contentType: 'application/json',
+            headers: { Authorization: "Bearer " + token },
+            success: (data) => {
+                tbl.innerHTML = '';
+                data.forEach(user => {
+                    let roleName = 'User';
+                    if (user.roleId === 1) {
+                        roleName = 'Admin';
+                    } else if (user.roleId === 2) {
+                        roleName = 'Product Manager';
+                    }
+                    
+                    tbl.innerHTML += `
+                        <tr>
+                            <td>${user.id}</td>
+                            <td>${user.name}</td>
+                            <td>${user.tell}</td>
+                            <td>${user.username}</td>
+                            <td>${user.password}</td>
+                            <td>${roleName}</td>
+                            <td>
+                                <a onClick="openEdit(${user.id})" uk-icon="icon: file-edit"></a>
+                               <a onClick="deleteUser('${user.username}')" uk-icon="icon: trash"></a>
+                            </td>
+                        </tr>`;
+                });
+            },
+            error: (err) => {
+                console.error("Load Error:", err);
+            }
+        });
+    }
+
+    function addUser() {
+        const token = getToken();
+        const dto = {
+            name: document.getElementById('name').value,
+            tell: document.getElementById('tell').value,
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+            roleId: Number(document.getElementById('role').value)
+        };
+
+        $.ajax({
+            url: 'https://localhost:7139/api/User',
+            method: 'POST',
+            contentType: 'application/json',
+            headers: { Authorization: "Bearer " + token },
+            data: JSON.stringify(dto),
+            success: (user) => {
+                UIkit.modal(document.getElementById('modal-add-user')).hide();
+                loadGrid();
+                ['name', 'tell', 'username', 'password'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('role').value = '3';
+            },
+            error: (err) => {
+                console.error("Add Error:", err);
+            }
+        });
+    }
+
+    function openEdit(id) {
+        const token = getToken();
+        selectionId = id;
+        $.ajax({
+            url: `https://localhost:7139/api/User/${id}`,
+            method: 'GET',
+            contentType: 'application/json',
+            headers: { Authorization: "Bearer " + token },
+            success: (user) => {
+                UIkit.modal(document.getElementById('modal-edit-user')).show();
+                document.getElementById('ename').value = user.name;
+                document.getElementById('etell').value = user.tell;
+                document.getElementById('eusername').value = user.username;
+                document.getElementById('epassword').value = user.password;
+                document.getElementById('erole').value = user.roleId;
+            },
+            error: (err) => {
+                console.error("Fetch for Edit Error:", err);
+            }
+        });
+    }
+
+    function editUser() {
+        const token = getToken();
+        const dto = {
+            id: selectionId,
+            name: document.getElementById('ename').value,
+            tell: document.getElementById('etell').value,
+            username: document.getElementById('eusername').value,
+            password: document.getElementById('epassword').value,
+            roleId: Number(document.getElementById('erole').value)
+        };
+
+        $.ajax({
+            url: 'https://localhost:7139/api/User',
+            method: 'PUT',
+            contentType: 'application/json',
+            headers: { Authorization: "Bearer " + token },
+            data: JSON.stringify(dto),
+            success: () => {UIkit.modal(document.getElementById('modal-edit-user')).hide();
+                loadGrid();
+                ['ename', 'etell', 'eusername', 'epassword'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('erole').value = '';
+            },
+            error: (err) => {
+                console.error("Edit Error:", err);
+            }
+        });
+    }
+
+    function deleteUser(username) {
+        if (!confirm('آیا از حذف این کاربر اطمینان دارید؟')) {
+            return;
+        }
+
+        const token = getToken();
+        $.ajax({
+            url: `https://localhost:7139/api/User/${username}`,
+            method: 'DELETE',
+            contentType: 'application/json',
+            headers: { Authorization: "Bearer " + token },
+            success: () => {
+                loadGrid();
+                alert('کاربر با موفقیت حذف شد');
+            },
+            error: (err) => {
+                console.error("Delete Error:", err);
+                let errorMessage = 'خطا در حذف کاربر';
+                if (err.responseJSON && err.responseJSON.message) {
+                    errorMessage += ': ' + err.responseJSON.message;
+                } else if (err.responseText) {
+                    errorMessage += ': ' + err.responseText;
+                }
+                alert(errorMessage);
+            }
+        });
+    }
+    $(document).ready(function(){
+        loadGrid();
+    });
+    </script>
+
+</body>
+</html>

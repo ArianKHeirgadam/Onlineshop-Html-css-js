@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ثبت نام - فروشگاه ما</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+ 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #ffffff, #006d77);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 90%;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo h1 {
+            color: #006d77;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            text-align: right;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #006d77;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #006d77;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .register-btn:hover {
+            background-color: #004d54;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .login-link a {
+            color: #006d77;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link a:hover {
+            color: #006d77;
+        }
+
+        #errors {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>فروشگاه ما</h1>
+        </div>
+        <form class="register-form" id="registerForm">
+            <div class="form-group">
+                <label for="name"><b>نام و نام خانوادگی</b></label>
+                <input type="text" id="TxtName" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="Tell"><b>شماره تلفن</b></label>
+                <input type="tel" id="TxtTell" name="Tell" required>
+            </div>
+            <div class="form-group">
+                <label for="username"><b>نام کاربری</b></label>
+                <input type="text" id="txtUsername" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password"><b>رمز عبور</b></label>
+                <input type="password" id="txtPassword" name="password" required>
+            </div>
+            <button type="submit" class="register-btn">ثبت نام</button>
+        </form>
+        <div class="login-link">
+            <p>قبلاً ثبت نام کرده‌اید؟ <a href="login.html">ورود</a></p>
+        </div>
+        <div class="back-link">
+            <a href="main.html">بازگشت به صفحه اصلی</a>
+        </div>
+        <div id="errors"></div>
+    </div>
+
+    <div id="product-modal" class="uk-flex-top" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical" style="border-radius: 10px; max-width: 400px; background-color: #edf6f9;">
+            <button class="uk-modal-close-default" type="button" uk-close style="color: #006d77;"></button>
+            <div id="modal-content" style="color: #006d77;">
+            </div>
+        </div>
+    </div>
+    <script src="js/jquery-3.7.1.min.js"></script>
+   
+<script>
+  $(document).ready(function () {
+    $('#registerForm').on('submit', function (e) {
+      e.preventDefault();
+
+      const txtName = $('#TxtName').val();
+      const txtTell = $('#TxtTell').val();
+      const txtUsername = $('#txtUsername').val();
+      const txtPassword = $('#txtPassword').val();
+
+      const dto = {
+        name: txtName,
+        tell: txtTell,
+        username: txtUsername,
+        password: txtPassword
+      };
+
+      $.ajax({
+        url: 'https://localhost:7139/api/Account/Register',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(dto),
+
+        success: () => {
+          
+          $.ajax({
+            url: 'https://localhost:7139/api/Account/Login',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ username: txtUsername, password: txtPassword }),
+
+            success: (loginResponse) => {
+              const token = typeof loginResponse === 'string'
+                ? loginResponse.replace(/^"|"$/g, '')
+                : loginResponse.token;
+
+              if (!token) {
+                console.error('توکن دریافت نشد:', loginResponse);
+                return;
+              }
+
+              localStorage.setItem('token', token);
+              window.location.href = 'main.html?t=' + new Date().getTime();
+            },
+
+            error: (err) => {
+              console.error('خطا در لاگین بعد ثبت‌نام:', err);
+              $('#errors').html(`<li>${err.responseText}</li>`);
+            }
+          });
+        },
+
+        error: (err) => {
+          console.error('خطا در ثبت‌نام:', err);
+          $('#errors').html(`<li>${err.responseText}</li>`);
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>  

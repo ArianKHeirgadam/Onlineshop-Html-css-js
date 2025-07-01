@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Store</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: #edf6f9;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #006d77;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .nav-links > a:not(.login-btn):not(.register-btn) {
+            color: #006d77;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.05rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links > a:not(.login-btn):not(.register-btn):hover {
+            color: #1d2d44;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .auth-buttons .login-btn,
+        .auth-buttons .register-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .auth-buttons .login-btn {
+            background-color: transparent;
+            color: #006d77;
+            border: 2px solid #006d77;
+        }
+
+        .auth-buttons .login-btn:hover {
+            background-color: #006d77;
+            color: #edf6f9;
+        }
+
+        .auth-buttons .register-btn {
+            background-color: #006d77;
+            color: #edf6f9;
+            border: 2px solid #006d77;
+        }
+
+        .auth-buttons .register-btn:hover {
+            background-color: #1d2d44;
+            border-color: #1d2d44;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
+            color: #333;
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #006d77;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            color: #666;
+        }
+
+        .features {
+            padding: 4rem 0;
+            background-color: #ffffff;
+        }
+
+        .features h2 {
+            text-align: center;
+            color: #006d77;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #006d77;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: #006d77;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 1.2rem;
+        }
+
+        footer {
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer-content p {
+            margin-bottom: 1rem;
+            color: #666;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: #006d77;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #004d54;
+        }
+
+        .uk-container {
+            background-color: #edf6f9;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin: 2rem auto;
+            width: 100%;
+            max-width: 1600px;
+        }
+
+        #main {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 1rem;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        #main td {
+            padding: 1rem;
+            vertical-align: top;
+            width: 25%;
+            box-sizing: border-box;
+        }
+
+        #brands {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        #brands li {
+            cursor: pointer;
+        }
+
+        #brands li a {
+            color: #006d77;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        #brands li a:hover {
+            background-color: #006d77;
+            color: #ffffff;
+        }
+
+        .uk-badge {
+            background-color: #006d77 !important;
+            color: #ffffff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .uk-badge:hover {
+            background-color: #004d54 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="nav-links">
+                <div class="auth-buttons">
+                    <a href="login.html" class="login-btn">ورود</a>
+                    <a href="register.html" class="register-btn">ثبت نام</a>
+                </div>
+                <a href="#">تماس با ما</a>
+                <a href="#">درباره ما</a>
+                <div class="uk-inline">
+                    <a href="#" class="uk-button uk-button-link" style="color: #006d77; text-decoration: none; font-weight: 500; font-size: 1.05rem;">محصولات</a>
+                    <div uk-dropdown="mode: hover; pos: bottom-center" style="text-align: right;">
+                        <ul class="uk-nav uk-dropdown-nav" style="background-color: #edf6f9; border-radius: 8px; padding: 10px; direction: rtl;">
+                            <li><a href="#" style="color: #006d77; text-decoration: none; padding: 8px 15px; display: block; transition: all 0.3s; text-align: right; font-size: 1.2rem;">اپل</a></li>
+                            <li><a href="#" style="color: #006d77; text-decoration: none; padding: 8px 15px; display: block; transition: all 0.3s; text-align: right; font-size: 1.2rem;">سامسونگ</a></li>
+                            <li><a href="#" style="color: #006d77; text-decoration: none; padding: 8px 15px; display: block; transition: all 0.3s; text-align: right; font-size: 1.2rem;">شیائومی</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <a href="#">خانه</a>
+            </div>
+            <a href="#" class="logo">فروشگاه انلاین</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <p><b>محصولات شگفت‌انگیز را با قیمت‌های رقابتی کشف کنید. با اطمینان خرید کنید و از یک تجربه خرید مطمئن لذت ببرید</b></p>
+        </div>
+    </section>
+
+    <div class="uk-container">
+        <table id="main" border="0" cellspacing="10px" style="width: 100%;"></table>
+    </div>
+
+    <section class="features">
+        <div class="container">
+            <h2><b>چرا ما</b></h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-truck"></i>
+                    <h3><b>تحویل پر سرعت</b></h3>
+                    <p><b>محصولات خود را سریع و مطمئن درب منزل تحویل بگیرید</b></p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3><b>خرید مطمئن</b></h3>
+                    <p><b>با اعتماد از درگاه پرداخت امن ما خرید کنید</b></p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-headset"></i>
+                    <h3><b>پشتیبانی 24 ساعته</b></h3>
+                    <p><b>تیم پشتیبانی ما در هر لحظه اماده پاسخگویی به شما </b></p>
+                </div>
+            </div>
+        </div>
+    </section>
+     <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+     function getToken() {
+    return localStorage.getItem("token");
+  }
+
+  function loadProducts() {
+    const token = getToken();
+    if (!token) {
+      console.warn("توکن موجود نیست");
+      return;
+    }
+
+    const headers = { Authorization: `Bearer ${token}` };
+
+    $.ajax({
+      url: 'https://localhost:7139/api/Product',
+      method: 'GET',
+      contentType: 'application/json',
+      headers: headers,
+      success: function (data) {
+        if (!data || !Array.isArray(data)) return;
+        for (let i = 0; i < data.length; i++) {
+          generateCard(data[i]);
+        }
+      },
+      error: function (err) {
+        console.error('خطا در دریافت محصولات:', err);
+      }
+    });
+  }
+
+  function loadBrands() {
+    const token = getToken();
+    if (!token) {
+      console.warn("توکن موجود نیست");
+      return;
+    }
+
+    const headers = { Authorization: `Bearer ${token} `};
+
+    $.ajax({
+      url: 'https://localhost:7139/api/Brand',
+      method: 'GET',
+      contentType: 'application/json',
+      headers: headers,
+      success: function (data) {
+        const brandList = document.getElementById('brands');
+        if (!brandList || !Array.isArray(data)) return;
+
+        brandList.innerHTML = `<li onClick="getBrands(0)"><a>All</a></li>`;
+        for (let i = 0; i < data.length; i++) {
+          brandList.innerHTML += `<li onClick="getBrands(${data[i].id})"><a>${data[i].name}</a></li>`;
+        }
+      },
+      error: function (err) {
+        console.error('خطا در دریافت برندها:', err);
+      }
+    });
+  }
+
+  function getBrands(id) {
+    const token = getToken();
+    if (!token) {
+      console.warn("توکن موجود نیست");
+      return;
+    }
+
+    const headers = { Authorization: `Bearer ${token}` };
+
+    const url = id === 0
+      ? 'https://localhost:7139/api/Product'
+      : `https://localhost:7139/api/Product/GetByBrand/${id}`;
+
+    $.ajax({
+      url: url,
+      method: 'GET',
+      contentType: 'application/json',
+      headers: headers,
+      success: function (data) {
+        const main = document.getElementById('main');
+        if (!main || !Array.isArray(data)) return;
+
+        main.innerHTML = '';
+        for (let i = 0; i < data.length; i++) {
+          generateCard(data[i]);
+        }
+      },
+      error: function (err) {
+        console.error('خطا در دریافت محصولات برند:', err);
+      }
+    });
+  }
+
+  async function tryLoadData() {
+    const token = getToken();
+    if (!token) {
+      console.warn("لاگین نشده‌ای!");
+      return;
+    }
+try {
+    await loadBrands();
+    loadProducts();
+} catch(e) {
+    console.error("error in data loading", e);
+}
+}
+    $(document).ready(function () {
+    tryLoadData();
+  });
+    </script>
+    
+
+<div id="product-modal" class="uk-flex-top" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical" style="border-radius: 10px; max-width: 400px; background-color: #edf6f9;">
+        <button class="uk-modal-close-default" type="button" uk-close style="color: #006d77;"></button>
+        <div id="modal-content" style="color: #006d77;">
+
+        </div>
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+</body>
+</html> 
